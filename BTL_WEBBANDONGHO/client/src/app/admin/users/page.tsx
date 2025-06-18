@@ -74,8 +74,6 @@ export default function UserPage() {
     setUserDialog(false);
   };
 
-
-
   const isValidPassword = (password: string): boolean => password.length >= 6;
   const isValidEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -142,7 +140,6 @@ export default function UserPage() {
       return;
     }
 
-  
   try {
     let response: AxiosResponse<{ data: User }>;
     if (user.NguoiDungID) {
@@ -163,6 +160,7 @@ export default function UserPage() {
         life: 3000,
       });
     } else {
+      console.log(user)
       response = await axios.post(`${API_URL}/create`, user);
       if (response?.data?.data) {
         setUsers((prev) => [...prev, response.data.data]);

@@ -1,0 +1,24 @@
+{
+  "name": "webbandongho",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix API_WEBBANDONGHO\" \"npm run dev --prefix ./BTL_WEBBANDONGHO/client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jasminek2iu/WebBanDongHo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Jasminek2iu/WebBanDongHo/issues"
+  },
+  "homepage": "https://github.com/Jasminek2iu/WebBanDongHo#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

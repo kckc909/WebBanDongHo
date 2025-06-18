@@ -5,9 +5,9 @@ import path from 'path';
 const uploadFolderPath = path.join(process.cwd(), 'uploads/sanpham');
 
 // Upload 1 ảnh duy nhất
- 
+
 export async function upLoadImages(req, res) {
-  
+
   console.log("req.file =", req.file);
   console.log("req.files =", req.files);
 

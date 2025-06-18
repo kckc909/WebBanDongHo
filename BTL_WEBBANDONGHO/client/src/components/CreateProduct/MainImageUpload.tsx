@@ -4,7 +4,7 @@ import Image from "next/image";
 
 interface MainImageUploadProps {
   mainImage: File | null;
-  handleMainImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleMainImageChange: (img: File) => void;
 }
 
 const MainImageUpload: React.FC<MainImageUploadProps> = ({
@@ -37,7 +37,12 @@ const MainImageUpload: React.FC<MainImageUploadProps> = ({
           <input
             type="file"
             accept="image/*"
-            onChange={handleMainImageChange}
+            onChange={() => {
+              const input = event?.target as HTMLInputElement;
+              if (input.files && input.files.length > 0) {
+                handleMainImageChange(input.files[0]);
+              }
+            }}
             hidden
           />
         </label>

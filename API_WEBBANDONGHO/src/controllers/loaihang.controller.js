@@ -4,6 +4,7 @@ const LoaiHangController = {
   getAllLoaiHang: async (req, res) => {
     try {
       const loaiHang = await LoaiHangService.getAllLoaiHang();
+
       if (loaiHang.length === 0) {
         return res.status(404).json({ message: 'Không có loại hàng nào trong hệ thống.' });
       }

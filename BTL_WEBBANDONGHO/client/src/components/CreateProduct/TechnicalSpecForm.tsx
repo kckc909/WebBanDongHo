@@ -1,47 +1,15 @@
 "use client";
 
+import { ThongSoKyThuat } from "@/services/productService";
 import React from "react";
+import { set } from "react-hook-form";
 
-interface TechnicalSpecFormProps {
-  duongKinhMat: string;
-  setDuongKinhMat: (value: string) => void;
-  chatLieuDay: string;
-  setChatLieuDay: (value: string) => void;
-  chatLieuVo: string;
-  setChatLieuVo: (value: string) => void;
-  khangNuoc: string;
-  setKhangNuoc: (value: string) => void;
-  loaiMay: string;
-  setLoaiMay: (value: string) => void;
-  nguonGoc: string;
-  setNguonGoc: (value: string) => void;
-  trongLuong: string;
-  setTrongLuong: (value: string) => void;
-  doDay: string;
-  setDoDay: (value: string) => void;
-  baoHanh: string;
-  setBaoHanh: (value: string) => void;
-}
-
-const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
-  duongKinhMat,
-  setDuongKinhMat,
-  chatLieuDay,
-  setChatLieuDay,
-  chatLieuVo,
-  setChatLieuVo,
-  khangNuoc,
-  setKhangNuoc,
-  loaiMay,
-  setLoaiMay,
-  nguonGoc,
-  setNguonGoc,
-  trongLuong,
-  setTrongLuong,
-  doDay,
-  setDoDay,
-  baoHanh,
-  setBaoHanh,
+const TechnicalSpecForm = ({
+  thongSoKyThuat,
+  setThongSoKyThuat,
+}: {
+  thongSoKyThuat: ThongSoKyThuat;
+  setThongSoKyThuat: (thongSoKyThuat: ThongSoKyThuat) => void;
 }) => {
   return (
     <div className="bg-white shadow-md p-6 rounded-lg space-y-6">
@@ -52,8 +20,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={duongKinhMat}
-            onChange={(e) => setDuongKinhMat(e.target.value)}
+            value={thongSoKyThuat.DuongKinhMat}
+            onChange={(e) => setThongSoKyThuat({...thongSoKyThuat, DuongKinhMat: e.target.value })}
           />
         </div>
 
@@ -62,8 +30,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={chatLieuDay}
-            onChange={(e) => setChatLieuDay(e.target.value)}
+            value={thongSoKyThuat.ChatLieuDay}
+            onChange={(e) => setThongSoKyThuat({...thongSoKyThuat, ChatLieuDay: e.target.value })}
           />
         </div>
 
@@ -72,8 +40,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={chatLieuVo}
-            onChange={(e) => setChatLieuVo(e.target.value)}
+            value={thongSoKyThuat.ChatLieuVo}
+            onChange={(e) => setThongSoKyThuat({...thongSoKyThuat, ChatLieuVo: e.target.value })}
           />
         </div>
 
@@ -82,8 +50,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={khangNuoc}
-            onChange={(e) => setKhangNuoc(e.target.value)}
+            value={thongSoKyThuat.KhangNuoc}
+            onChange={(e) => setThongSoKyThuat({ ...thongSoKyThuat, KhangNuoc: e.target.value })}
           />
         </div>
 
@@ -92,8 +60,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={loaiMay}
-            onChange={(e) => setLoaiMay(e.target.value)}
+            value={thongSoKyThuat.LoaiMay}
+            onChange={(e) => setThongSoKyThuat({ ...thongSoKyThuat, LoaiMay: e.target.value })}
           />
         </div>
 
@@ -102,8 +70,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={nguonGoc}
-            onChange={(e) => setNguonGoc(e.target.value)}
+            value={thongSoKyThuat.NguonGoc}
+            onChange={(e) => setThongSoKyThuat({ ...thongSoKyThuat, NguonGoc: e.target.value })}
           />
         </div>
 
@@ -112,8 +80,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={trongLuong}
-            onChange={(e) => setTrongLuong(e.target.value)}
+            value={thongSoKyThuat.TrongLuong}
+            onChange={(e) => setThongSoKyThuat({ ...thongSoKyThuat, TrongLuong: e.target.value })}
           />
         </div>
 
@@ -122,8 +90,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={doDay}
-            onChange={(e) => setDoDay(e.target.value)}
+            value={thongSoKyThuat.DoDay}
+            onChange={(e) => setThongSoKyThuat({ ...thongSoKyThuat, DoDay: e.target.value })}
           />
         </div>
 
@@ -132,8 +100,8 @@ const TechnicalSpecForm: React.FC<TechnicalSpecFormProps> = ({
           <input
             type="text"
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
-            value={baoHanh}
-            onChange={(e) => setBaoHanh(e.target.value)}
+            value={thongSoKyThuat.BaoHanh}
+            onChange={(e) => setThongSoKyThuat({ ...thongSoKyThuat, BaoHanh: e.target.value })}
           />
         </div>
       </div>

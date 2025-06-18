@@ -48,26 +48,6 @@ const AnhSPController = {
   },
 
 
-  // Thêm 1 ảnh (upload 1 file)
-  // insert: async (req, res) => {
-  //   try {
-  //     const { SanPhamID, TenAnh } = req.body;
-  //     let URLAnh;
-
-  //     if (req.file) {
-  //       URLAnh = `/uploads/anhsp/${req.file.filename}`;
-  //     } else if (req.body.URLAnh) {
-  //       URLAnh = req.body.URLAnh;
-  //     } else {
-  //       return res.status(400).json({ message: "Cần cung cấp ảnh hoặc đường dẫn ảnh" });
-  //     }
-
-  //     const newAnh = await AnhSPService.insert({ SanPhamID, TenAnh, URLAnh });
-  //     res.status(201).json(newAnh);
-  //   } catch (err) {
-  //     res.status(500).json({ message: err.message });
-  //   }
-  // },
 
   // Upload nhiều ảnh cùng lúc
   uploadImages: async (req, res) => {

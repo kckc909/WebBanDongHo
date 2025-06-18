@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  Brand,
-  Category,
+  HangDongHo,
+  LoaiHang,
   getAllBrands,
   getAllCategories,
-  ProductData,
+  SanPham,
 } from "@/services/productService";
 import React, { useEffect, useState } from "react";
 
@@ -13,23 +13,20 @@ const ProductInfoForm = ({
   productData,
   setProductData,
 }: {
-  productData: ProductData;
-  setProductData: (product: ProductData) => void;
+  productData: SanPham;
+  setProductData: (product: SanPham) => void;
 }) => {
   // state
-  const [brands, setBrands] = useState<Brand[]>(); // danh sách brand từ Main
-  const [categories, setCategories] = useState<Category[]>(); // danh sách category từ Main
+  const [brands, setBrands] = useState<HangDongHo[]>([]);
+  const [categories, setCategories] = useState<LoaiHang[]>([]);
 
-  const fetchData = async () => {
-    // gọi api cates
-    const cates = await getAllCategories();
-    setCategories(cates.data);
-    // gọi api brands
-    const brnds = getAllBrands();
-    setBrands((await brnds).data);
-  };
-  // xử lý đầu vào
   useEffect(() => {
+    const fetchData = async () => {
+      const cates = await getAllCategories();
+      setCategories(cates.data || []);
+      const brnds = await getAllBrands();
+      setBrands(brnds.data || []);
+    };
     fetchData();
   }, []);
 
@@ -65,7 +62,7 @@ const ProductInfoForm = ({
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
           >
             <option value="">Chọn danh mục</option>
-            {categories!.map((c: Category) => (
+            {categories.map((c: LoaiHang) => (
               <option key={c.LoaiHangID} value={c.LoaiHangID}>
                 {c.TenLoai}
               </option>
@@ -84,7 +81,7 @@ const ProductInfoForm = ({
             className="w-full p-2 rounded-lg shadow-md bg-white border-amber-50"
           >
             <option value="">Chọn hãng</option>
-            {brands!.map((b) => (
+            {brands.map((b) => (
               <option key={b.HangID} value={b.HangID}>
                 {b.TenHang}
               </option>

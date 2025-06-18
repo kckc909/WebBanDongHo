@@ -65,7 +65,7 @@ const NguoiDungController = {
     },
 
     createUser: async (req, res) => {
-        try {
+        try { 
             const { HoTen, Email, MatKhau, GioiTinh, DienThoai, VaiTro } = req.body;
             if (!Email || !MatKhau) {
                 return res.status(400).json({ success: false, message: "Thiếu email hoặc mật khẩu" });

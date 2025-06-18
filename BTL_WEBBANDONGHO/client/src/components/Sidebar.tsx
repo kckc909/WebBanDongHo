@@ -85,7 +85,7 @@ const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
               <ul className="ml-8 mt-1">
                 <li>
                   <Link
-                    href="/admin/create"
+                    href="/admin/products"
                     className="block px-2 py-1 hover:bg-gray-700 rounded-md text-sm"
                   >
                     Danh sách sản phẩm
@@ -93,7 +93,7 @@ const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
                 </li>
                 <li>
                   <Link
-                    href="/admin/create_products"
+                    href="/admin/create"
                     className="block px-2 py-1 hover:bg-gray-700 rounded-md text-sm"
                   >
                     Thêm sản phẩm

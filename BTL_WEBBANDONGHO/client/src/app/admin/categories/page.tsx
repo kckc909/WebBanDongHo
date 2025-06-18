@@ -8,17 +8,14 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import { LoaiHang } from "@/services/productService";
 
 const API_URL = "http://localhost:4000/api/loaihang";
 
 export default function LoaiHangPage() {
-  interface LoaiHang {
-    LoaiHangID: string | null;
-    TenLoai: string;
-  }
 
   const emptyLoaiHang: LoaiHang = {
-    LoaiHangID: null,
+    LoaiHangID: 0,
     TenLoai: "",
   };
 
@@ -36,13 +33,13 @@ export default function LoaiHangPage() {
   }, []);
 
   const fetchLoaiHangs = async () => {
-     try {
-    const response = await axios.get(`${API_URL}/`);
-    console.log("API DATA:", response.data); // Check here
-    setLoaiHangs(response.data.data || response.data); // Fallback nếu không có `data.data`
-  } catch (error) {
-    console.error("Lỗi khi lấy loại hàng:", error);
-  }
+    try {
+      const response = await axios.get(`${API_URL}/`);
+      console.log("API DATA:", response.data);
+      setLoaiHangs(response.data.data || response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy loại hàng:", error);
+    }
   };
 
   const openNew = () => {
@@ -70,38 +67,38 @@ export default function LoaiHangPage() {
     }
 
     try {
-  let response: AxiosResponse<{ data: LoaiHang }>;
+      let response: AxiosResponse<{ data: LoaiHang }>;
 
-  if (loaiHang.LoaiHangID) {
-    response = await axios.put(`${API_URL}/update/${loaiHang.LoaiHangID}`, loaiHang);
-    setLoaiHangs((prev) =>
-      prev.map((item) =>
-        item.LoaiHangID === loaiHang.LoaiHangID ? response.data.data : item
-      )
-    );
-    toast.current?.show({
-      severity: "success",
-      summary: "Thành công",
-      detail: "Cập nhật loại hàng",
-      life: 3000,
-    });
-  } else {
-    response = await axios.post(`${API_URL}/create`, loaiHang);
-    if (response?.data?.data) {
-      setLoaiHangs((prev) => [...prev, response.data.data]);
-      console.log("RESPONSE CREATE:", response.data);
-    }
-    toast.current?.show({
-      severity: "success",
-      summary: "Thành công",
-      detail: "Thêm loại hàng mới",
-      life: 3000,
-    });
-  }
+      if (loaiHang.LoaiHangID) {
+        response = await axios.put(`${API_URL}/update/${loaiHang.LoaiHangID}`, loaiHang);
+        setLoaiHangs((prev) =>
+          prev.map((item) =>
+            item.LoaiHangID === loaiHang.LoaiHangID ? response.data.data : item
+          )
+        );
+        toast.current?.show({
+          severity: "success",
+          summary: "Thành công",
+          detail: "Cập nhật loại hàng",
+          life: 3000,
+        });
+      } else {
+        response = await axios.post(`${API_URL}/create`, loaiHang);
+        if (response?.data?.data) {
+          setLoaiHangs((prev) => [...prev, response.data.data]);
+          console.log("RESPONSE CREATE:", response.data);
+        }
+        toast.current?.show({
+          severity: "success",
+          summary: "Thành công",
+          detail: "Thêm loại hàng mới",
+          life: 3000,
+        });
+      }
 
       setLoaiHangDialog(false);
       fetchLoaiHangs();
-    } 
+    }
     catch (error) {
       console.error("Lỗi khi lưu loại hàng:", error);
       toast.current?.show({

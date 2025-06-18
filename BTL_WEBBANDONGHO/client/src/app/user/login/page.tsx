@@ -12,7 +12,7 @@ import { Card } from "primereact/card";
 
 
 interface LoginData {
- 
+
   email: string;
   password: string;
 
@@ -58,29 +58,25 @@ const LoginForm = () => {
 
     try {
       const res = await axios.post("http://localhost:4000/api/users/login", {
-     
         Email: formData.email,
         MatKhau: formData.password,
-      
       });
-      console.log("API Response:", res.data);
-      const { token, user } = res.data;
-    
+      
+      const { token, user } = res.data.data;
+
       // Lưu vào localStorage trước khi redirect
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-    
-   
+
+
       setTimeout(() => {
-        if (user.VaiTro === "admin") {
+        if (user.VaiTro == "admin") {
           router.push("/admin");
-          console.log("áhdygsfdygasdghsayg")
+
         } else {
           router.push("/");
-          console.log("1234324")
-        }
 
-        console.log(user.VaiTro)
+        }
       }, 100);
 
     } catch (error) {
@@ -105,9 +101,9 @@ const LoginForm = () => {
           {/* Email */}
           <div className="p-field">
             <label>Email</label>
-            <InputText 
-              type="email" 
-              {...register("email")} 
+            <InputText
+              type="email"
+              {...register("email")}
               className="w-full p-inputtext"
               placeholder="example@gmail.com"
             />
@@ -117,9 +113,9 @@ const LoginForm = () => {
           {/* Mật khẩu */}
           <div className="p-field">
             <label>Mật khẩu</label>
-            <Password 
-              feedback={false} 
-              toggleMask 
+            <Password
+              feedback={false}
+              toggleMask
               className="w-full"
               onChange={(e) => setValue("password", e.target.value)}
             />

@@ -1,168 +1,231 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  getAllBrands,
-  getAllCategories,
-  createProduct,
-  createTechSpecs,
-  uploadSubImages,
+	getAllBrands,
+	getAllCategories,
+	createProduct,
+	ThongSoKyThuat,
+	SanPham,
+	AnhSP,
+	LoaiHang,
+	HangDongHo,
+	uploadMainImage,
+	uploadSubImage,
+	saveSubImageInfo,
+	createThongSoKyThuat,
+	uploadSubImages,
 } from "@/services/productService";
-import ProductInfoForm from "@/components/ProductInfoForm";
-import MainImageUpload from "@/components/MainImageUpload";
-import SubImagesUpload from "@/components/SubImagesUpload";
-import TechniclSpecForm from "@/components/TechnicalSpecForm";// nhớ import nếu có
+import ProductInfoForm from "@/components/CreateProduct/ProductInfoForm";
+import MainImageUpload from "@/components/CreateProduct/MainImageUpload";
+import SubImagesUpload from "@/components/CreateProduct/SubImagesUpload";
+import TechniclSpecForm from "@/components/CreateProduct/TechnicalSpecForm";// nhớ import nếu có
 import { AxiosError } from "axios";
-import { Category } from "@/services/productService";
-import { Brand } from "@/services/productService";
+import { useRouter } from "next/navigation";
+
 
 export default function AddProductForm() {
-  // state 4 com
-  const [com_1, setCom_1] = useState()
-  const [com_2, setCom_2] = useState()
-  const [com_3, setCom_3] = useState()
-  const [com_4, setCom_4] = useState()
+	// Declare 
+	const newSanPham = {
+		SanPhamID: 0,
+		LoaiHangID: 0,
+		HangID: 0,
+		TenSanPham: '',
+		GiaGoc: 0,
+		GiaBan: 0,
+		SoLuongTon: 0,
+		MoTa: '',
+		MoTaChiTiet: '',
+		HinhAnh: '',
+		SoLuotDanhGia: 0,
+		TongSao: 0,
+		LuotBan: 0,
+		NgayTao: new Date(),
+		NgayCapNhat: new Date(),
+	} as SanPham
+	const newThongSoKyThuat = {
+		ThongSoKyThuatID: 0,
+		SanPhamID: 0,
+		DuongKinhMat: "",
+		ChatLieuDay: "",
+		ChatLieuVo: "",
+		KhangNuoc: "",
+		LoaiMay: "",
+		NguonGoc: "",
+		TrongLuong: "",
+		DoDay: "",
+		BaoHanh: "",
+		NgayTao: new Date(),
+		NgayCapNhat: new Date(),
+	} as ThongSoKyThuat
+	const newAnhSP = {
+		AnhSPID: 0,
+		SanPhamID: 0,
+		TenAnh: '',
+		URLAnh: '',
+		NgayTao: new Date(),
+		NgayCapNhat: new Date()
+	} as AnhSP
 
-  // ProductInfoForm
-  const Com_1Handle = () => {
+	// State 
+	const [sanPham, setSanPham] = useState<SanPham>(newSanPham);
+	const [thongSoKyThuat, setThongSoKyThuat] = useState<ThongSoKyThuat>(newThongSoKyThuat);
+	const [anhSP, setAnhSP] = useState<AnhSP>(newAnhSP);
+	const [categories, setCategories] = useState<LoaiHang[]>(); // ds loại trong db
+	const [brands, setBrands] = useState<HangDongHo[]>(); // ds hãng trong db
 
-  }
-  // MainImageUpload
-  const Com_2Handle = () => {
-    
-  }//SubImagesUpload
-  const Com_3Handle = () => {
-    
-  }//TechniclSpecForm
-  const Com_4Handle = () => {
-    
-  }
+	const [mainImage, setMainImage] = useState<File | null>(null);
+	const [subImages, setSubImages] = useState<File[]>([]);
 
+	const [message, setMessage] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [productName, setProductName] = useState("");
-  const [mainImage, setMainImage] = useState<File | null>(null);
-  const [subImages, setSubImages] = useState<File[]>([]);
-  const [category, setCategory] = useState("");
-  const [brand, setBrand] = useState("");
+	const router = useRouter();
 
-  const [specs, setSpecs] = useState({
-    DuongKinhMat: "",
-    ChatLieuDay: "",
-    ChatLieuVo: "",
-    KhangNuoc: "",
-    LoaiMay: "",
-    NguonGoc: "",
-    TrongLuong: "",
-    DoDay: "",
-    BaoHanh: "",
-  });
+	// Effect
+	useEffect(() => {
+		const fetchOptions = async () => {
+			try {
+				const [cateRes, brandRes] = await Promise.all([
+					getAllCategories(),
+					getAllBrands(),
+				]);
+				setCategories(cateRes.data);
+				setBrands(brandRes.data);
+			} catch (err) {
+				console.error("Lỗi tải loại hàng/brand:", err);
+			}
+		};
+		fetchOptions();
+	}, []);
 
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+	const handleReset = () => {
+		setSanPham(newSanPham);
+		setThongSoKyThuat(newThongSoKyThuat);
+		setAnhSP(newAnhSP);
+		setMainImage(null);
+		setSubImages([]);
+		setMessage("");
+	}
 
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [cateRes, brandRes] = await Promise.all([
-          getAllCategories(),
-          getAllBrands(),
-        ]);
-        setCategories(cateRes.data);
-        setBrands(brandRes.data);
-      } catch (err) {
-        console.error("Lỗi tải loại hàng/brand:", err);
-      }
-    };
-    fetchOptions();
-  }, []);
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsSubmitting(true);
+		setMessage("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setMessage("");
+		try {
+			let mainImageName = "";
 
-    try {
-      const formData = new FormData();
-      formData.append("TenSP", productName);
-      formData.append("LoaiHangID", category);
-      formData.append("HangID", brand);
-      if (mainImage) formData.append("AnhDaiDien", mainImage);
+			// 1. Upload main image
+			if (mainImage) {
+				const mainForm = new FormData();
+				mainForm.append("HinhAnh", mainImage);
+				const uploadRes = await uploadMainImage(mainForm);
+				if (!uploadRes.data.files || !uploadRes.data.files[0]) throw new Error("Không nhận được tên file ảnh đại diện");
+				mainImageName = uploadRes.data.files[0];
+			}
 
-      const productRes = await createProduct(formData);
-      const SanPhamID = productRes.data.SanPhamID;
+			// 2. Tạo sản phẩm với tên ảnh đại diện
+			const productToCreate = {
+				...sanPham,
+				HinhAnh: mainImageName,
+			};
 
-      const techSpecArray = Object.entries(specs).map(([key, value]) => ({
-        SanPhamID,
-        TenThongSo: key,
-        GiaTri: value,
-      }));
+			const formData = new FormData();
+			Object.entries(productToCreate).forEach(([key, value]) => {
+				if (value instanceof Date) {
+					formData.append(key, value.toISOString());
+				} else {
+					formData.append(key, value as any);
+				}
+			});
 
-      await createTechSpecs(techSpecArray);
+			const productRes = await createProduct(formData);
+			const SanPhamID = productRes.data.data.SanPhamID;
 
-      if (subImages.length > 0) {
-        const subImageForm = new FormData();
-        subImages.forEach((img) => subImageForm.append("images", img));
-        subImageForm.append("SanPhamID", SanPhamID.toString());
-        await uploadSubImages(subImageForm);
-      }
+			// 3. Lưu thông số kỹ thuật
+			await createThongSoKyThuat({ ...thongSoKyThuat, SanPhamID });
 
-      setMessage("✅ Thêm sản phẩm thành công!");
-      // Reset form nếu muốn
-      setProductName("");
-      setCategory("");
-      setBrand("");
-      setMainImage(null);
-      setSubImages([]);
-      setSpecs({
-        DuongKinhMat: "",
-        ChatLieuDay: "",
-        ChatLieuVo: "",
-        KhangNuoc: "",
-        LoaiMay: "",
-        NguonGoc: "",
-        TrongLuong: "",
-        DoDay: "",
-        BaoHanh: "",
-      });
-    } catch (err) {
-      let msg = "Lỗi không xác định!";
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "isAxiosError" in err &&
-        (err as AxiosError).isAxiosError
-      ) {
-        const axiosErr = err as AxiosError<{ message?: string }>;
-        msg = axiosErr.response?.data?.message || msg;
-      }
-      setMessage(`❌ ${msg}`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+			// 4. Upload và lưu subImages
+			if (subImages.length > 0) {
+				const subForm = new FormData();
+				subForm.append("SanPhamID", String(SanPhamID));
+				subImages.forEach((file) => {
+					subForm.append("HinhAnh", file);
+				});
+				console.log("Uploading sub images: ----- ", subForm);
+				await uploadSubImages(subForm);
+			}
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Thêm sản phẩm</h2>
+			setMessage("✅ Thêm sản phẩm thành công!");
+			handleReset(); 
 
-      <ProductInfoForm 
-        
-      />
+			router.push("/admin/products");
+		} catch (err) {
+			console.error("Lỗi khi thêm sản phẩm:", err);
+			let msg = "Lỗi không xác định!";
+			if (
+				typeof err === "object" &&
+				err !== null &&
+				"isAxiosError" in err &&
+				(err as AxiosError).isAxiosError
+			) {
+				const axiosErr = err as AxiosError<{ message?: string }>;
+				msg = axiosErr.response?.data?.message || msg;
+			} else if (err instanceof Error) {
+				msg = err.message;
+			}
+			setMessage(`❌ ${msg}`);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
-      <MainImageUpload mainImage={mainImage} setMainImage={setMainImage} />
+	return (
+		<form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded shadow">
+			<h2 className="text-xl font-bold">Thêm sản phẩm</h2>
+			<div className="flex gap-4">
+				<MainImageUpload
+					mainImage={mainImage}
+					handleMainImageChange={setMainImage}
+				/>
 
-      <SubImagesUpload subImages={subImages} setSubImages={setSubImages} />
+				<SubImagesUpload
+					subImages={subImages}
+					setSubImages={setSubImages}
+				/>
+			</div>
 
-      <TechniclSpecForm specs={specs} setSpecs={setSpecs} />
+			<ProductInfoForm
+				productData={sanPham}
+				setProductData={setSanPham}
+			/>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-      >
-        {isSubmitting ? "Đang xử lý..." : "Thêm sản phẩm"}
-      </button>
+			<TechniclSpecForm
+				thongSoKyThuat={thongSoKyThuat}
+				setThongSoKyThuat={setThongSoKyThuat}
+			/>
 
-      {message && <p className="text-sm mt-2">{message}</p>}
-    </form>
-  );
+			<div className="flex justify-end gap-4 mt-6">
+				<button
+					type="button"
+					className="border border-amber-500 text-amber-500 hover:bg-amber-50 font-semibold py-2 px-6 rounded shadow"
+					onClick={() => {
+						router.push("/admin/products");
+						handleReset();
+					}}
+				>
+					Huỷ Thêm
+				</button>
+				<button
+					type="submit"
+					className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-6 rounded shadow"
+				>
+					Thêm sản phẩm
+				</button>
+			</div>
+
+			{message && <p className="text-sm mt-2">{message}</p>}
+		</form>
+	);
 }
+

@@ -61,7 +61,7 @@ SanPham.insert = async (sanPham) => {
             ]
         );
 
-        return { SanPhamID: res.insertId, ...sanPham };
+        return { SanPhamID: res.insertId };
     } catch (err) {
         throw new Error("Lỗi khi thêm sản phẩm: " + err.message);
     }

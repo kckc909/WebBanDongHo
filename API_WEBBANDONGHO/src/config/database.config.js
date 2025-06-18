@@ -1,6 +1,5 @@
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
-
 dotenv.config();
 
 const pool = mysql.createPool({
@@ -16,10 +15,11 @@ const pool = mysql.createPool({
 async function checkConnection() {
   try {
     const connection = await pool.getConnection();
+
     if (!connection) throw new Error("Không lấy được kết nối MySQL");
 
     console.log("✅ Kết nối MySQL thành công!");
-    connection.release(); // Trả kết nối về pool
+    connection.release(); // Trả kết nối về pool 
   } catch (err) {
     console.error("❌ Lỗi kết nối MySQL:", err.message);
   }

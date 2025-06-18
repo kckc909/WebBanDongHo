@@ -9,15 +9,17 @@ const AdminPage = () => {
 
     useEffect(() => {
         const userData = localStorage.getItem("user");
+
         if (userData) {
             const parsedUser = JSON.parse(userData);
-            if (parsedUser.VaiTro !== "admin") {
-                router.push("/"); // Chặn user không phải admin
+
+            if (parsedUser.VaiTro.toLowerCase() != "admin") {
+                router.push("/");
             } else {
                 setUser(parsedUser);
             }
         } else {
-            router.push("/user/login"); // Chưa đăng nhập → chuyển về login
+            router.push("/user/login");
         }
     }, [router]);
 
@@ -26,7 +28,6 @@ const AdminPage = () => {
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold">Trang Quản Trị</h1>
-           
         </div>
     );
 };

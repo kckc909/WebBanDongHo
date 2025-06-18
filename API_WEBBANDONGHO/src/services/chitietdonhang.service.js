@@ -17,7 +17,7 @@ const ChiTietDonHangService = {
       return ctdh;
     } catch (err) {
       throw new Error("Lỗi khi lấy chi tiết đơn hàng: " + err.message);
-    }
+    } 
   },
 
   getByDonHangId: async (donHangId) => {

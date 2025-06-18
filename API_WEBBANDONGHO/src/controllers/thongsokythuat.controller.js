@@ -37,7 +37,9 @@ const ThongSoKyThuatController = {
   // Thêm mới
   insert: async (req, res) => {
     const tskt = req.body;
+    console.log("Received ThongSoKyThuat:", tskt);
 
+  
     if (!tskt || !tskt.SanPhamID) {
       return res.status(400).json({ message: "Thiếu thông tin sản phẩm hoặc thông số kỹ thuật." });
     }
