@@ -30,8 +30,5 @@ Thumbs.db
 package-lock.json
 yarn.lock
 
-# Database
-db.sql
-
 # Other
 *.local
