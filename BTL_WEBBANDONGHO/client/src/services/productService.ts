@@ -131,4 +131,10 @@ export const getAllProducts = (): Promise<{ data: SanPham[] }> =>
 export const getProductById = (id: number): Promise<{ data: SanPham }> =>
 	api.get<SanPham>(`/sanpham/${id}`);
 
+export const getThongSoKyThuatBySanPhamId = (id: number): Promise<{ data: ThongSoKyThuat }> =>
+	api.get<ThongSoKyThuat>(`/thongsokythuat/sanpham/${id}`);
+
+export const getSubImagesBySanPhamId = (id: number): Promise<{ data: AnhSP[] }> =>
+	api.get<AnhSP[]>(`/anhsanpham/anhsanpham/${id}`);
+
 export default api;

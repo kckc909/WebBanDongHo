@@ -68,9 +68,10 @@ const LoginForm = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
+      console.log("Đăng nhập thành công:", user);
 
       setTimeout(() => {
-        if (user.VaiTro == "admin") {
+        if (user.VaiTro.toLowerCase() == "admin") {
           router.push("/admin");
 
         } else {

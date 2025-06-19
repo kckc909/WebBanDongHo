@@ -87,6 +87,29 @@ const ThongSoKyThuatController = {
       res.status(500).json({ message: "Lỗi khi xóa thông số kỹ thuật.", error: err.message });
     }
   },
+
+  // Lấy thông số kỹ thuật theo sản phẩm
+  getBySanPhamId: async (req, res) => {
+    const { id } = req.params;
+    console.log("Received sanPhamId:", id);
+
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ message: "ID sản phẩm không hợp lệ hoặc không được cung cấp." });
+    }
+
+    try {
+      const tsktList = await ThongSoKyThuatService.getBySanPhamId(id);
+
+      if (!tsktList || tsktList.length === 0) {
+        return res.status(404).json({ message: `Không tìm thấy thông số kỹ thuật cho sản phẩm với ID = ${id}` });
+      }
+
+      res.status(200).json({message:"Lấy thông tin thông số kỹ thuật theo sản phẩm thành công!",tsktList});
+    } catch (err) {
+      console.error("Lỗi getBySanPhamId:", err);
+      res.status(500).json({ message: "Lỗi khi lấy thông số kỹ thuật theo sản phẩm.", error: err.message });
+    }
+  }
 };
 
 module.exports = ThongSoKyThuatController;

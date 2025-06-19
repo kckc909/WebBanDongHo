@@ -107,4 +107,18 @@ ThongSoKyThuat.delete = async (id) => {
     }
 };
 
+// Lấy thông số kỹ thuật theo ID sản phẩm
+ThongSoKyThuat.getBySanPhamId = async (sanPhamId) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM ThongSoKyThuat WHERE SanPhamID = ?", [sanPhamId]);
+        if (rows.length === 0) {
+            throw new Error(`Không tìm thấy thông số kỹ thuật cho sản phẩm với ID = ${sanPhamId}`);
+        }
+        return rows;
+    } catch (err) {
+        throw new Error("Lỗi khi lấy thông số kỹ thuật theo sản phẩm: " + err.message);
+    }
+}
+
+
 module.exports = ThongSoKyThuat;

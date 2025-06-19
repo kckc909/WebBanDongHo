@@ -4,6 +4,7 @@ const ThongSoKyThuatController = require("../controllers/thongsokythuat.controll
 
 router.get("/", ThongSoKyThuatController.getAll);
 router.get("/:id", ThongSoKyThuatController.getById);
+router.get("/sanpham/:id", ThongSoKyThuatController.getBySanPhamId);
 router.post("/create", ThongSoKyThuatController.insert);
 router.put("/update/:id", ThongSoKyThuatController.update);
 router.delete("/delete/:id", ThongSoKyThuatController.delete);

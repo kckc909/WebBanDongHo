@@ -1,11 +1,11 @@
 'use client'
 import ProductList from "@/components/Productshop";
 import ServicePromo from "@/components/Service";
-import { getAllProducts, getProductById, SanPham } from "@/services/productService";
+import { AnhSP, getAllProducts, getProductById, getSubImagesBySanPhamId, getThongSoKyThuatBySanPhamId, SanPham, ThongSoKyThuat } from "@/services/productService";
 import Link from "next/dist/client/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Toast } from "primereact/toast";
 
 export default function DetailProductID_() {
@@ -32,27 +32,43 @@ export default function DetailProductID_() {
     // state
     const router = useRouter();
     const toast = useRef<Toast>(null);
+    const searchParams = useSearchParams();
+    const params = useParams();
+    const id = params?.i;
+
     const [product, setProduct] = useState<SanPham>();
+    const [thongSoKyThuat, setThongSoKyThuat] = useState<ThongSoKyThuat>();
+    const [subImages, setSubImages] = useState<AnhSP[]>([]);
 
-
-    //effect 
     useEffect(() => {
         const fetchData = async () => {
-            const searchParams = useSearchParams();
-            const id = searchParams.get("id");
-            if (id) {
-                const res = await getProductById(Number(id));
-                if (res.data) {
-                    setProduct(res.data);
-                    setMainImage(res.data.HinhAnh);
-                }
-            } else {
+            if (!id) {
                 router.push("/user");
                 toast.current?.show({ severity: 'error', summary: 'Lỗi', detail: 'Không tìm thấy sản phẩm', life: 3000 });
+                return;
             }
-        }
+
+            const productRes = await getProductById(Number(id));
+            const specRes = await getThongSoKyThuatBySanPhamId(Number(id));
+            const subImgRes = await getSubImagesBySanPhamId(Number(id));
+
+            if (productRes.data) {
+                setProduct(productRes.data);
+                setMainImage(productRes.data.HinhAnh
+                    ? `http://localhost:4000/uploads/sanpham/${productRes.data.HinhAnh}`
+                    : "/images/product/product-01.png"
+                );
+            }
+            if (specRes.data) setThongSoKyThuat(specRes.data);
+            if (subImgRes.data) setSubImages(subImgRes.data);
+
+            console.log("Product:", productRes.data);
+            console.log("Specifications:", specRes.data);
+            console.log("Sub Images:", subImgRes.data);
+        };
         fetchData();
-    }, []);
+        console.log("Product", product);
+    }, [id, router]);
 
     const handleReviewSubmit = () => {
         if (rating && comment) {
@@ -89,51 +105,56 @@ export default function DetailProductID_() {
                         Đồng Hồ
                     </Link>
                     <span>/</span>
-                    <span className="text-orange-500">Đồng hồ Casio G-Shock GA-2100</span>
+                    <span className="text-orange-500">{product?.TenSanPham}</span>
                 </nav>
 
                 <div className="grid md:grid-cols-2 gap-8 mb-8">
                     {/* Hình ảnh sản phẩm */}
                     <div>
-                        <div className="relative w-full h-[400px] rbg-white rounded-lg shadow gap-3 p-3 overflow-hidden text-black border border-gray-200">
-                            <Image
+                        <div className="relative w-full h-[400px] bg-white rounded-lg shadow gap-3 p-3 overflow-hidden text-black border border-gray-200">
+                            <img
                                 src={mainImage}
-                                alt="Đồng hồ"
-                                fill
-                                className="object-contain"
+                                alt={product?.TenSanPham || "Đồng hồ"}
+                                className="object-contain h-full w-full rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
                             />
                         </div>
                         <div className="flex gap-2 mt-4">
-                            {[
-                                "/images/product/product-01.png",
-                                "/images/product/product-02.png",
-                                "/images/product/product-03.png",
-                            ].map((img, idx) => (
-                                <div
-                                    key={idx}
-                                    className="w-[80px] h-[80px] relative bg-white rounded-lg shadow gap-3 p-3 overflow-hidden text-black border border-gray-200"
-                                    onClick={() => setMainImage(img)}
-                                >
-                                    <Image
-                                        src={img}
-                                        alt={`thumb-${idx}`}
-                                        fill
-                                        className="object-contain"
-                                    />
-                                </div>
-                            ))}
+                            {subImages && subImages.length > 0
+                                ? subImages.map((img, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="w-[80px] h-[80px] relative bg-white rounded-lg shadow gap-3 p-3 overflow-hidden text-black border border-gray-200"
+                                        onClick={() => setMainImage(`http://localhost:4000${img.URLAnh}`)}
+                                    >
+                                        <img
+                                            src={`http://localhost:4000${img.URLAnh}`}
+                                            alt={`thumb-${idx}`}
+                                            className="object-contain"
+                                        />
+                                    </div>
+                                ))
+                                : (
+                                    <div>Không có ảnh phụ</div>
+                                )
+                            }
                         </div>
                     </div>
 
                     {/* Thông tin sản phẩm */}
                     <div>
                         <h3 className="text-2xl font-semibold">
-                            Đồng hồ Casio G-Shock GA-2100
+                            {product?.TenSanPham}
                         </h3>
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-red-500 text-xl">37.090.000đ</span>
-                            <del className="text-gray-500">44.790.000đ</del>
-                            <span className="text-green-600">(Giảm 17%)</span>
+                            <span className="text-red-500 text-xl">{product?.GiaBan?.toLocaleString()}đ</span>
+                            {product?.GiaGoc && product?.GiaGoc > product?.GiaBan && (
+                                <del className="text-gray-500">{product?.GiaGoc?.toLocaleString()}đ</del>
+                            )}
+                            {product?.GiaGoc && product?.GiaGoc > product?.GiaBan && (
+                                <span className="text-green-600">
+                                    (Giảm {Math.round(100 - (product.GiaBan / product.GiaGoc) * 100)}%)
+                                </span>
+                            )}
                         </div>
 
                         <div className="flex items-center mt-2 gap-1 text-yellow-400 text-sm">
@@ -159,13 +180,7 @@ export default function DetailProductID_() {
                         </div>
 
                         <p className="mt-3 text-gray-700">
-                            Đồng hồ <strong>Casio G-Shock GA-2100</strong> là biểu tượng của sự
-                            kết hợp hoàn hảo giữa thiết kế hiện đại và công nghệ tiên tiến. Với
-                            thiết kế vỏ bát giác góc cạnh lấy cảm hứng từ dòng DW-5000C kinh
-                            điển, mẫu GA-2100 mang đến vẻ ngoài mạnh mẽ, thể thao nhưng không
-                            kém phần tinh tế.
-                            <br />
-                            <br />
+                            {product?.MoTa}
                         </p>
 
                         <div className="flex gap-2 mt-4 items-center">
@@ -178,19 +193,11 @@ export default function DetailProductID_() {
                             />
 
                             <button
-                                // onClick={() => {
-                                //   // xử lý thêm vào giỏ tại đây, ví dụ gọi API hoặc state
-                                //   router.push("/user/orders");
-                                // }}
                                 className="px-6 py-3 bg-yellow-400 text-black font-semibold rounded-lg shadow-lg hover:bg-yellow-500 transform hover:scale-105 transition"
                             >
                                 Mua Ngay
                             </button>
                             <button
-                                // onClick={() => {
-                                //   // xử lý thêm vào giỏ tại đây, ví dụ gọi API hoặc state
-                                //   router.push("/user/orders");
-                                // }}
                                 className="px-6 py-3 text-red-500 font-semibold rounded-lg border-2 border-red-600 hover:bg-red-50 transform hover:scale-105 transition"
                             >
                                 <i className="bx bx-basket"></i> Thêm vào giỏ
@@ -238,31 +245,18 @@ export default function DetailProductID_() {
                     {activeTab === "Mô Tả Chi Tiết" && (
                         <div>
                             <p className="mt-3 text-gray-700">
-                                Đồng hồ <strong>Casio G-Shock GA-2100</strong> là biểu tượng của
-                                sự kết hợp hoàn hảo giữa thiết kế hiện đại và công nghệ tiên tiến.
-                                Với thiết kế vỏ bát giác góc cạnh lấy cảm hứng từ dòng DW-5000C
-                                kinh điển, mẫu GA-2100 mang đến vẻ ngoài mạnh mẽ, thể thao nhưng
-                                không kém phần tinh tế.
-                                <br />
-                                <br />
-                                Vỏ đồng hồ được chế tạo từ chất liệu{" "}
-                                <strong>Carbon Core Guard</strong> siêu nhẹ và siêu bền, giúp tăng
-                                khả năng chống va đập và chống sốc tối ưu. Khả năng chống nước lên
-                                đến <strong>200 mét</strong> cho phép bạn sử dụng thoải mái trong
-                                các hoạt động hàng ngày lẫn thể thao dưới nước.
-                                <br />
-                                <br />
-                                Mặt đồng hồ kết hợp giữa kim analog và màn hình điện tử, mang lại
-                                sự tiện lợi trong việc xem giờ và các tính năng khác như: đồng hồ
-                                bấm giờ, đếm ngược, báo thức và lịch tự động. Ngoài ra, thời lượng
-                                pin lên đến <strong>3 năm</strong> giúp bạn yên tâm sử dụng lâu
-                                dài mà không phải lo lắng.
-                                <br />
-                                <br />
-                                Với thiết kế unisex và nhiều phối màu thời trang, Casio G-Shock
-                                GA-2100 là lựa chọn lý tưởng cho cả nam và nữ yêu thích phong cách
-                                trẻ trung, năng động và cá tính.
+                                {product?.MoTaChiTiet}
                             </p>
+                        </div>
+                    )}
+
+                    {activeTab === "Thông Số Kỹ Thuật" && thongSoKyThuat && (
+                        <div>
+                            <ul>
+                                <li>Đường kính mặt: {thongSoKyThuat.DuongKinhMat}</li>
+                                <li>Chất liệu dây: {thongSoKyThuat.ChatLieuDay}</li>
+                                {/* ... các thông số khác ... */}
+                            </ul>
                         </div>
                     )}
 

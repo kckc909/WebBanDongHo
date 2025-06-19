@@ -46,4 +46,16 @@ ThongSoKyThuatService.delete = async (id) => {
     }
 };
 
+ThongSoKyThuatService.getBySanPhamId = async (sanPhamId) => {
+    try {
+        const tsktList = await ThongSoKyThuat.getBySanPhamId(sanPhamId);
+        if (!tsktList || tsktList.length === 0) {
+            throw new Error(`Không tìm thấy thông số kỹ thuật cho sản phẩm với ID = ${sanPhamId}.`);
+        }
+        return tsktList;
+    } catch (err) {
+        throw new Error("Lỗi khi lấy thông số kỹ thuật theo sản phẩm: " + err.message);
+    }
+}
+
 module.exports = ThongSoKyThuatService;
